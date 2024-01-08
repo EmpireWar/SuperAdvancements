@@ -2,6 +2,7 @@ package me.gamercoder215.superadvancements.v1_20_R3;
 
 import me.gamercoder215.superadvancements.advancement.AProgress;
 import me.gamercoder215.superadvancements.advancement.criteria.ACriteriaProgress;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.CriterionProgress;
 import net.minecraft.server.PlayerAdvancements;
@@ -12,12 +13,27 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.gamercoder215.superadvancements.v1_20_R3.Wrapper1_20_R3.toNMS;
 
 @SuppressWarnings("unchecked")
 final class AProgress1_20_R3 implements AProgress {
+
+    private static final Field CRITERIA_FIELD;
+    private static final Field PROGRESS_CHANGED_FIELD;
+
+    static {
+        try {
+            CRITERIA_FIELD = AdvancementProgress.class.getDeclaredField("e");
+            CRITERIA_FIELD.setAccessible(true);
+            PROGRESS_CHANGED_FIELD = PlayerAdvancements.class.getDeclaredField("h");
+            PROGRESS_CHANGED_FIELD.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private final Player p;
     private final ServerPlayer sp;
@@ -64,9 +80,7 @@ final class AProgress1_20_R3 implements AProgress {
     @Override
     public @NotNull Map<String, ACriteriaProgress> getCriteria() {
         try {
-            Field criteriaF = AdvancementProgress.class.getDeclaredField("e");
-            criteriaF.setAccessible(true);
-            Map<String, CriterionProgress> criteria = (Map<String, CriterionProgress>) criteriaF.get(handle);
+            Map<String, CriterionProgress> criteria = (Map<String, CriterionProgress>) CRITERIA_FIELD.get(handle);
             return criteria.entrySet()
                     .stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new ACriteriaProgress1_20_R3(e.getValue())));
         } catch (ReflectiveOperationException e) {
@@ -86,12 +100,29 @@ final class AProgress1_20_R3 implements AProgress {
 
     @Override
     public boolean grantCriteria(@NotNull String name) {
-        return handle.grantProgress(name);
+        final boolean success = handle.grantProgress(name);
+        if (success) markProgressDirty();
+        return success;
     }
 
     @Override
     public boolean revokeCriteria(@NotNull String name) {
-        return handle.revokeProgress(name);
+        final boolean success = handle.revokeProgress(name);
+        if (success) markProgressDirty();
+        return success;
     }
 
+    /**
+     * Fixes a bug where updating the progress of an advancement doesn't add it to dirty progress map
+     */
+    private void markProgressDirty() {
+        try {
+            Set<AdvancementHolder> progressChanged = (Set<AdvancementHolder>) PROGRESS_CHANGED_FIELD.get(manager);
+            progressChanged.add(advancement);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+
+        manager.flushDirty(sp);
+    }
 }

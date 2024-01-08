@@ -1220,6 +1220,9 @@ final class Wrapper1_20_R3 implements Wrapper {
 
         if (isRegistered(fromNMS(nms.id()))) throw new IllegalStateException("Advancement is already registered");
         manager.tree().addAll(Set.of(nms));
+        final Map<ResourceLocation, AdvancementHolder> copy = new HashMap<>(manager.advancements);
+        copy.put(toNMS(a.getKey()), nms);
+        manager.advancements = copy;
     }
 
     @Override
