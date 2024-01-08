@@ -21,9 +21,9 @@ public final class BukkitAdvancementManager implements PlayerAdvancementManager 
     }
 
     @Override
-    public void addAdvancement(@NotNull Iterable<? extends Advancement> advancements) {
+    public void addAdvancement(@NotNull Iterable<? extends Advancement> advancements, boolean clear) {
         if (advancements == null) return;
-        w.addAdvancement(player, ImmutableSet.copyOf(advancements));
+        w.addAdvancements(player, ImmutableSet.copyOf(advancements), clear);
     }
 
     @Override

@@ -32,15 +32,15 @@ public interface PlayerAdvancementManager {
      * Adds advancements to this Advancement Manager.
      * @param advancements Advancements to add
      */
-    void addAdvancement(@NotNull Iterable<? extends Advancement> advancements);
+    void addAdvancement(@NotNull Iterable<? extends Advancement> advancements, boolean clear);
 
     /**
      * Adds advancements to this Advancement Manager.
      * @param advancements Advancements to add
      */
-    default void addAdvancement(@NotNull Advancement... advancements) {
+    default void addAdvancement(boolean clear, @NotNull Advancement... advancements) {
         if (advancements == null || advancements.length == 0) return;
-        addAdvancement(ImmutableList.copyOf(advancements));
+        addAdvancement(ImmutableList.copyOf(advancements), clear);
     }
 
     /**

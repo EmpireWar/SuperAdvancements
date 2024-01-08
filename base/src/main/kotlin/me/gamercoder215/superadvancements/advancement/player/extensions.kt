@@ -7,13 +7,13 @@ import org.bukkit.NamespacedKey
  * Adds an advancement to this advancement manager.
  * @param advancement The advancement to add.
  */
-operator fun PlayerAdvancementManager.plus(advancement: Advancement) = addAdvancement(advancement)
+operator fun PlayerAdvancementManager.plus(advancement: Advancement) = addAdvancement(false, advancement)
 
 /**
  * Adds a list of advancements to this advancement manager.
  * @param advancements The advancements to add.
  */
-operator fun PlayerAdvancementManager.plus(advancements: Iterable<Advancement>) = addAdvancement(advancements)
+operator fun PlayerAdvancementManager.plus(advancements: Iterable<Advancement>) = addAdvancement(advancements, false)
 
 /**
  * Removes an advancement to this advancement manager.

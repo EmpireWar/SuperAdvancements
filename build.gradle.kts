@@ -112,8 +112,8 @@ allprojects {
                         password = System.getenv("JENKINS_PASSWORD")
                     }
 
-                    val releases = "https://repo.codemc.io/repository/maven-releases/"
-                    val snapshots = "https://repo.codemc.io/repository/maven-snapshots/"
+                    val releases = "https://repo.convallyria.com/releases/"
+                    val snapshots = "https://repo.convallyria.com/snapshots/"
                     url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshots else releases)
                 }
             }
@@ -131,7 +131,7 @@ publishing {
     }
 }
 
-val jvmVersion = JavaVersion.VERSION_11
+val jvmVersion = JavaVersion.VERSION_17
 
 subprojects {
     apply<JacocoPlugin>()
@@ -145,7 +145,7 @@ subprojects {
 
         testImplementation("org.mockito:mockito-core:5.8.0")
         testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
-        testImplementation("org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT")
+        testImplementation("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
     }
 
     java {

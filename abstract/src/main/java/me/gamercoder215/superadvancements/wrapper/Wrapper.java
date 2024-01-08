@@ -25,7 +25,7 @@ public interface Wrapper {
 
     void unregister(NamespacedKey key);
 
-    void addAdvancement(Player p, Set<Advancement> a);
+    void addAdvancements(Player p, Set<Advancement> a, boolean clear);
 
     void removeAdvancement(Player p, Set<NamespacedKey> key);
 

@@ -1242,7 +1242,7 @@ final class Wrapper1_20_R3 implements Wrapper {
     }
 
     @Override
-    public void addAdvancement(Player p, Set<Advancement> advancements) {
+    public void addAdvancements(Player p, Set<Advancement> advancements, boolean clear) {
         ServerPlayer sp = toNMS(p);
 
         Set<net.minecraft.advancements.AdvancementHolder> added = new HashSet<>();
@@ -1265,7 +1265,7 @@ final class Wrapper1_20_R3 implements Wrapper {
             map.put(nms.id(), prog);
         }
 
-        sp.connection.send(new ClientboundUpdateAdvancementsPacket(false, added, Set.of(), map));
+        sp.connection.send(new ClientboundUpdateAdvancementsPacket(clear, added, Set.of(), map));
         sp.getAdvancements().flushDirty(sp);
         sp.getAdvancements().save();
     }

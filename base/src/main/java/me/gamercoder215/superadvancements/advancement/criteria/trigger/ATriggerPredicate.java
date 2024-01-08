@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -47,8 +48,19 @@ public interface ATriggerPredicate<T extends ATriggerPredicate<T>> {
         /**
          * Represents an Item Predicate that matches any item.
          */
-        public static final Item ANY = new Item(EnumSet.allOf(Material.class).stream().map(ItemStack::new).collect(Collectors.toSet()), Range.ANY, Range.ANY, Set.of(Enchantment.ANY), Set.of(Enchantment.ANY));
+        public static final Item ANY;
 
+        static {
+            Set<ItemStack> stacks = new HashSet<>(Material.values().length);
+            // Workaround for terrible Spigot legacy material support
+            for (Material material : Material.values()) {
+                if (!material.isItem()) continue;
+                if (material.name().startsWith("LEGACY_")) continue;
+                stacks.add(new ItemStack(material));
+            }
+
+            ANY = new Item(Set.copyOf(stacks), Range.ANY, Range.ANY, Set.of(Enchantment.ANY), Set.of(Enchantment.ANY));
+        }
         private final Set<ItemStack> includes;
         private final Range count;
         private final Range durability;
@@ -164,10 +176,15 @@ public interface ATriggerPredicate<T extends ATriggerPredicate<T>> {
                 );
             }
 
+            int durability = item.getType().getMaxDurability();
+            if (item.hasItemMeta() && item.getItemMeta() instanceof Damageable damageable) {
+                durability = durability - damageable.getDamage();
+            }
+
             return new Item(
                 Set.of(item),
                 Range.exact(item.getAmount()),
-                Range.exact(item.getDurability()),
+                Range.exact(durability),
                 enchantments,
                 stored
             );
@@ -182,8 +199,8 @@ public interface ATriggerPredicate<T extends ATriggerPredicate<T>> {
             private final Set<ItemStack> includes = new HashSet<>();
             private Range count = Range.ANY;
             private Range durability = Range.ANY;
-            private Set<Enchantment> enchantments = new HashSet<>();
-            private Set<Enchantment> storedEnchantments = new HashSet<>();
+            private final Set<Enchantment> enchantments = new HashSet<>();
+            private final Set<Enchantment> storedEnchantments = new HashSet<>();
 
             /**
              * Copies an item predicate into this builder.

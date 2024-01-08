@@ -48,7 +48,7 @@ fun Advancement.Builder.buildAndRegister() = build().also { it.register() }
  * @return this advancement manager
  */
 operator fun BukkitAdvancementManager.plus(advancement: Advancement): BukkitAdvancementManager {
-    addAdvancement(advancement)
+    addAdvancement(false, advancement)
     return this
 }
 
@@ -58,7 +58,7 @@ operator fun BukkitAdvancementManager.plus(advancement: Advancement): BukkitAdva
  * @return this advancement manager
  */
 operator fun BukkitAdvancementManager.plus(advancement: Iterable<Advancement>): BukkitAdvancementManager {
-    addAdvancement(advancement)
+    addAdvancement(advancement, false)
     return this
 }
 

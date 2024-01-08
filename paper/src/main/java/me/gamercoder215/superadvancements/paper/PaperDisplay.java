@@ -3,10 +3,13 @@ package me.gamercoder215.superadvancements.paper;
 import me.gamercoder215.superadvancements.advancement.ADisplay;
 import me.gamercoder215.superadvancements.advancement.AFrame;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Locale;
 
 /**
  * Represents an Advancement Display for Paper.
@@ -63,12 +66,12 @@ public final class PaperDisplay extends ADisplay {
 
     @Override
     public String getTitleAsString() {
-        return getTitle().toString();
+        return JSONComponentSerializer.json().serialize(getTitle());
     }
 
     @Override
     public String getDescriptionAsString() {
-        return getDescription() == null ? "" : getDescription().toString();
+        return getDescription() == null ? "" : JSONComponentSerializer.json().serialize(getDescription());
     }
 
     /**
