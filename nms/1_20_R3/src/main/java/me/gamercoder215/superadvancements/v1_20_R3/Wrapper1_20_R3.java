@@ -879,7 +879,7 @@ final class Wrapper1_20_R3 implements Wrapper {
         if (a.getParent() == null && display.getBackgroundTexture() != null)
             bg = new ResourceLocation(display.getBackgroundTexture());
 
-        DisplayInfo nmsDisplay = new DisplayInfo(toNMS(display.getIcon()), Component.literal(title), Component.literal(desc), Optional.ofNullable(bg), frame, a.hasFlag(AFlag.TOAST), a.hasFlag(AFlag.MESSAGE), a.hasFlag(AFlag.HIDDEN));
+        DisplayInfo nmsDisplay = new DisplayInfo(toNMS(display.getIcon()), Component.Serializer.fromJson(title), Component.Serializer.fromJson(desc), Optional.ofNullable(bg), frame, a.hasFlag(AFlag.TOAST), a.hasFlag(AFlag.MESSAGE), a.hasFlag(AFlag.HIDDEN));
         nmsDisplay.setLocation(display.getX(), display.getY());
 
         ResourceLocation parent = a.getParent() == null ? null : toNMS(a.getParent().getKey());
